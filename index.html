@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>婚宴座位查詢</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      padding: 2rem;
+      text-align: center;
+      background-color: #fffaf8;
+      color: #333;
+    }
+    h1 {
+      font-size: 2rem;
+      color: #c94e4e;
+    }
+    input, button {
+      padding: 0.6rem;
+      font-size: 1.1rem;
+      margin: 0.5rem;
+      border-radius: 8px;
+      border: 1px solid #ccc;
+      width: 80%;
+      max-width: 300px;
+    }
+    button {
+      background-color: #c94e4e;
+      color: white;
+      border: none;
+      cursor: pointer;
+    }
+    button:hover {
+      background-color: #a83838;
+    }
+    .result {
+      margin-top: 1.5rem;
+      font-size: 1.3rem;
+      font-weight: bold;
+      color: #c94e4e;
+    }
+    .select-guest {
+      margin-top: 1rem;
+    }
+    .select-guest select {
+      font-size: 1rem;
+      padding: 0.4rem;
+    }
+    .table-map {
+      margin-top: 2rem;
+    }
+    .table-map img {
+      width: 100%;
+      max-width: 600px;
+      border: 2px solid #ccc;
+      border-radius: 12px;
+    }
+  </style>
+</head>
+<body>
+  <h1>🎉 婚宴座位查詢 🎉</h1>
+  <p>請輸入您的姓名或手機末三碼</p>
+
+  <input type="text" id="queryInput" placeholder="姓名 或 手機末三碼" maxlength="10" />
+  <button onclick="lookupSeat()">查詢</button>
+
+  <div class="result" id="result"></div>
+  <div class="select-guest" id="guestSelect"></div>
+
+  <div class="table-map">
+    <h2>📍 座位平面圖</h2>
+    <img src="https://via.placeholder.com/600x400?text=%E5%BA%A7%E4%BD%8D%E5%9C%96" alt="座位平面圖">
+  </div>
+
+  <script>
+    const guests = [
+      { name: "王曉明", phone: "0988125823", table: "A1" },
+      { name: "林松彥", phone: "0912345123", table: "A2" },
+      { name: "丁小二", phone: "0912424942", table: "B1" },
+      { name: "王大陸", phone: "0948109394", table: "B2" }
+    ];
+
+    function lookupSeat() {
+      const query = document.getElementById('queryInput').value.trim();
+      const resultEl = document.getElementById('result');
+      const guestSelectEl = document.getElementById('guestSelect');
+
+      guestSelectEl.innerHTML = '';
+      resultEl.textContent = '';
+
+      if (!query) {
+        resultEl.textContent = "請輸入姓名或手機末三碼。";
+        return;
+      }
+
+      const matches = guests.filter(g => g.name.includes(query) || g.phone.endsWith(query));
+
+      if (matches.length === 1) {
+        resultEl.textContent = `${matches[0].name} 您的桌號是：${matches[0].table}`;
+      } else if (matches.length > 1) {
+        let selectHTML = '<label>請選擇您的全名：</label><br/><select onchange="confirmGuest(this.value)"><option value="">-- 請選擇 --</option>';
+        matches.forEach(g => {
+          selectHTML += `<option value="${g.name}">${g.name}</option>`;
+        });
+        selectHTML += '</select>';
+        guestSelectEl.innerHTML = selectHTML;
+      } else {
+        resultEl.textContent = `查無資料，請確認輸入是否正確。`;
+      }
+    }
+
+    function confirmGuest(name) {
+      const guest = guests.find(g => g.name === name);
+      if (guest) {
+        document.getElementById('result').textContent = `${guest.name} 您的桌號是：${guest.table}`;
+      }
+    }
+  </script>
+</body>
+</html>

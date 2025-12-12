@@ -60,9 +60,9 @@
 </head>
 <body>
   <h1>🎉 婚宴座位查詢 🎉</h1>
-  <p>請輸入您的姓名</p>
+  <p>請輸入您的姓名或手機末三碼</p>
 
-  <input type="text" id="queryInput" placeholder="姓名" maxlength="10" />
+  <input type="text" id="queryInput" placeholder="姓名 或 手機末三碼" maxlength="10" />
   <button onclick="lookupSeat()">查詢</button>
 
   <div class="result" id="result"></div>
@@ -78,39 +78,39 @@
       { name: "傅筱涵", table: "19" },
       { name: "吳昌任", table: "19" },
       { name: "楊育嘉", table: "19" },
-      { name: "張耀友", table: "19" }
-      { name: "陳桂豪", table: "19" }
-      { name: "孫乃婷", table: "19" }
-      { name: "劉圃語", table: "20" }
-      { name: "謝偉泓", table: "20" }
-      { name: "陳柏安", table: "20" }
-      { name: "張晏禎", table: "20" }
-      { name: "黃建銘", table: "20" }
-      { name: "程世菘", table: "20" }
-      { name: "陳彥融", table: "20" }
-      { name: "黃彬逢", table: "21" }
-      { name: "王霆鈞", table: "21" }
-      { name: "任家達", table: "21" }
-      { name: "Ray", 	table: "21" }
-      { name: "楊琳鈞", table: "21" }
-      { name: "劉冠廷", table: "21" }
-	  { name: "李峻豪", table: "22" }
-	  { name: "林暐博", table: "22" }
-	  { name: "李世鴻", table: "22" }
-	  { name: "賴柏丞", table: "22" }
-	  { name: "劉柏宏", table: "22" }
-	  { name: "徐浩耕", table: "22" }
-	  { name: "盧翰均", table: "23" }
-	  { name: "許景仁", table: "23" }
-	  { name: "苗育宗", table: "23" }
-	  { name: "施詹", 	table: "23" }
-	  { name: "楊CP", 	table: "23" }
-	  { name: "林宗緯", table: "23" }
-	  { name: "張敬昇", table: "24" }
-	  { name: "曹峻豪", table: "24" }
-	  { name: "Adam", 	table: "24" }
-	  { name: "Penny", 	table: "24" }
-	  { name: "Waylen", table: "24" }
+      { name: "張耀友", table: "19" },
+      { name: "陳桂豪", table: "19" },
+      { name: "孫乃婷", table: "19" },
+      { name: "劉圃語", table: "20" },
+      { name: "謝偉泓", table: "20" },
+      { name: "陳柏安", table: "20" },
+      { name: "張晏禎", table: "20" },
+      { name: "黃建銘", table: "20" },
+      { name: "程世菘", table: "20" },
+      { name: "陳彥融", table: "20" },
+      { name: "黃彬逢", table: "21" },
+      { name: "王霆鈞", table: "21" },
+      { name: "任家達", table: "21" },
+      { name: "Ray", 	table: "21" },
+      { name: "楊琳鈞", table: "21" },
+      { name: "劉冠廷", table: "21" },
+	  { name: "李峻豪", table: "22" },
+	  { name: "林暐博", table: "22" },
+	  { name: "李世鴻", table: "22" },
+	  { name: "賴柏丞", table: "22" },
+	  { name: "劉柏宏", table: "22" },
+	  { name: "徐浩耕", table: "22" },
+	  { name: "盧翰均", table: "23" },
+	  { name: "許景仁", table: "23" },
+	  { name: "苗育宗", table: "23" },
+	  { name: "施詹", 	table: "23" },
+	  { name: "楊CP", 	table: "23" },
+	  { name: "林宗緯", table: "23" },
+	  { name: "張敬昇", table: "24" },
+	  { name: "曹峻豪", table: "24" },
+	  { name: "Adam", 	table: "24" },
+	  { name: "Penny", 	table: "24" },
+	  { name: "Waylen", table: "24" },
     ];
 
     function lookupSeat() {
@@ -122,7 +122,7 @@
       resultEl.textContent = '';
 
       if (!query) {
-        resultEl.textContent = "請輸入姓名來查詢您的座位。";
+        resultEl.textContent = "請輸入姓名或手機末三碼。";
         return;
       }
 

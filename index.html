@@ -271,7 +271,7 @@ const guests = [
         return;
       }
 
-      const matches = guests.filter(g => g.name.includes(query));
+	  const matches = guests.filter(g => g.name.toLowerCase().includes(query));
 
       if (matches.length === 1) {
         resultEl.textContent = `${matches[0].name} 您的桌號是：${matches[0].table}`;

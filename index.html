@@ -56,17 +56,16 @@
       border: 2px solid #ccc;
       border-radius: 12px;
     }
-	.pdf-wrapper {
+    .pdf-wrapper {
       width: 100%;
       max-width: 900px;
-      height: 70vh;                 /* ⭐ 關鍵 */
+      height: 70vh;
       margin: 1rem auto 0;
       border-radius: 14px;
       overflow: hidden;
       box-shadow: 0 6px 18px rgba(0,0,0,0.15);
       background: #fff;
     }
-
     .pdf-wrapper iframe {
       width: 100%;
       height: 100%;
@@ -85,17 +84,18 @@
   <div class="select-guest" id="guestSelect"></div>
 
   <div class="table-map">
-		<h2>📍 座位平面圖</h2>
-		<div class="pdf-wrapper">
-		  <iframe
-			src="https://drive.google.com/file/d/1zexy5__MeuZsXD4d3t2Sk2fvprYNGVjB/preview"
-			loading="lazy"
-			allowfullscreen>
-		  </iframe>
-		</div>
+    <h2>📍 座位平面圖</h2>
+    <div class="pdf-wrapper">
+      <iframe
+        src="https://drive.google.com/file/d/1zexy5__MeuZsXD4d3t2Sk2fvprYNGVjB/preview"
+        loading="lazy"
+        allowfullscreen>
+      </iframe>
+    </div>
   </div>
 
   <script>
+const CHECKIN_API = 'https://script.google.com/macros/s/AKfycbwzUYLyVZik1urifiHi1tVVeyb_m0lWxAeB_1cJeT-JMUMi1GgX-QXZ4Mme12J3xln6/exec';
 const guests = [
   // 1號桌 - 主桌
   { name: "新娘", table: "1" },
@@ -324,17 +324,17 @@ const guests = [
 
 
       if (matches.length === 1) {
-        resultEl.textContent = `${matches[0].name} 您的桌號是：${matches[0].table}`;
-      } else if (matches.length > 1) {
-        let selectHTML = '<label>請選擇您的全名：</label><br/><select onchange="confirmGuest(this.value)"><option value="">-- 請選擇 --</option>';
-        matches.forEach(g => {
-          selectHTML += `<option value="${g.name}">${g.name}</option>`;
-        });
-        selectHTML += '</select>';
-        guestSelectEl.innerHTML = selectHTML;
-      } else {
-        resultEl.textContent = `查無資料，請確認輸入是否正確。`;
-      }
+		showGuest(matches[0]);
+	  } else if (matches.length > 1) {
+		let selectHTML = '<label>請選擇您的全名：</label><br/><select onchange="confirmGuest(this.value)"><option value="">-- 請選擇 --</option>';
+		matches.forEach(g => {
+		  selectHTML += `<option value="${g.name}">${g.name}</option>`;
+		});
+		selectHTML += '</select>';
+		guestSelectEl.innerHTML = selectHTML;
+	  } else {
+		resultEl.textContent = `查無資料，請確認輸入是否正確。`;
+	  }
     }
 
     function confirmGuest(name) {
@@ -343,6 +343,44 @@ const guests = [
         document.getElementById('result').textContent = `${guest.name} 您的桌號是：${guest.table}`;
       }
     }
+	
+	function showGuest(guest) {
+	  const resultEl = document.getElementById('result');
+	  const guestSelectEl = document.getElementById('guestSelect');
+	  guestSelectEl.innerHTML = '';
+
+	  resultEl.innerHTML = `
+		${guest.name} 您的桌號是：${guest.table} <br/>
+		<button onclick="checkInGuest('${guest.name}')">✅ 報到</button>
+	  `;
+	}
+
+	function checkInGuest(name) {
+	  const guest = guests.find(g => g.name === name);
+	  if (!guest) return;
+
+	  fetch(CHECKIN_API, {
+		method: 'POST',
+		headers: { 'Content-Type': 'application/json' },
+		body: JSON.stringify({ name: guest.name, table: guest.table })
+	  })
+	  .then(res => res.json())
+	  .then(data => {
+		if(data.success) {
+		  alert(`${guest.name} 報到成功 🎉`);
+		  document.getElementById('result').innerHTML = `
+			${guest.name} 您的桌號是：${guest.table} <br/>
+			✅ 已報到
+		  `;
+		} else {
+		  alert(`報到失敗：${data.message || '請稍後再試'}`);
+		}
+	  })
+	  .catch(err => {
+		console.error(err);
+		alert('網路錯誤，請稍後再試');
+	  });
+	}
   </script>
 </body>
 </html>

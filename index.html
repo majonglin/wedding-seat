@@ -315,7 +315,10 @@ const guests = [
         return;
       }
 
-	  const matches = guests.filter(g => g.name.toLowerCase().includes(query));
+	  const matches = guests.filter(g =>
+		g.name.toLowerCase().includes(query.trim().toLowerCase())
+	  );
+
 
       if (matches.length === 1) {
         resultEl.textContent = `${matches[0].name} 您的桌號是：${matches[0].table}`;

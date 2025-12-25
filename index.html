@@ -286,7 +286,7 @@ function submitCheckin(name, table) {
   .then(() => {
     // 因為 no-cors 模式下無法讀取 response 內容，
     // 但只要沒噴錯，通常就是 Google 已經收到了
-    alert(`【${name}】報到成功！\n祝您用餐愉快！`);
+    alert(`【${name}】報到成功！`);
     document.getElementById('result').innerHTML = "✨ 已完成報到，謝謝您的蒞臨！";
     document.getElementById('queryInput').value = "";
   })

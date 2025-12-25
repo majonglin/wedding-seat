@@ -40,7 +40,7 @@
 <iframe name="checkinFrame" style="display:none;"></iframe>
 
 <script>
-const webAppUrl = 'https://script.google.com/macros/s/AKfycbzUJI1bqGnUiciy8H6VYo1lDcw1QQRoHH4fSSGb68S_-_Nc8S6tzn9ywn87qk2DuAir/exec';
+const webAppUrl = 'https://script.google.com/macros/s/AKfycbzXmIzPLwBDP-0Mq5MpEa_07wFZqPqtoWUiKAu-qTMVEkhM_Uo6a9exzTqAn_0XJwXL/exec';
 const guests = [
   // 1號桌 - 主桌
   { name: "新娘", table: "1" },
@@ -248,9 +248,57 @@ const guests = [
   { name: "Michael", table: "24" }
 ];
 
-    guests.forEach(g => g.name = g.name.trim());
+guests.forEach(g => g.name = g.name.trim());
 
-    function lookupSeat() {
+function selectGuest(name) {
+  const guest = guests.find(g => g.name === name);
+  if (guest) showCheckinButton(guest);
+}
+
+function showCheckinButton(guest) {
+  const resultEl = document.getElementById('result');
+  resultEl.innerHTML = `${guest.name} 您的桌號是：${guest.table}<br/><br/>`;
+
+  // 改成一般按鈕，點擊時觸發 JS 函式
+  const btn = document.createElement('button');
+  btn.id = "checkinBtn";
+  btn.textContent = "✅ 確認報到";
+  btn.onclick = () => submitCheckin(guest.name, guest.table);
+  resultEl.appendChild(btn);
+}
+
+function submitCheckin(name, table) {
+  const btn = document.getElementById('checkinBtn');
+  btn.disabled = true;
+  btn.textContent = "處理中...";
+
+  // 使用 URLSearchParams 封裝資料
+  const formData = new URLSearchParams();
+  formData.append('name', name);
+  formData.append('table', table);
+
+  // 使用 fetch 發送 POST
+  fetch(webAppUrl, {
+    method: 'POST',
+    body: formData,
+    mode: 'no-cors' // 關鍵：解決大部分 GAS 的跨域報錯
+  })
+  .then(() => {
+    // 因為 no-cors 模式下無法讀取 response 內容，
+    // 但只要沒噴錯，通常就是 Google 已經收到了
+    alert(`【${name}】報到成功！\n祝您用餐愉快！`);
+    document.getElementById('result').innerHTML = "✨ 已完成報到，謝謝您的蒞臨！";
+    document.getElementById('queryInput').value = "";
+  })
+  .catch(error => {
+    console.error('Error:', error);
+    alert('報到失敗，請洽現場工作人員。');
+    btn.disabled = false;
+    btn.textContent = "✅ 確認報到";
+  });
+}
+
+function lookupSeat() {
   const query = document.getElementById('queryInput').value.trim();
   const resultEl = document.getElementById('result');
   const guestSelectEl = document.getElementById('guestSelect');
@@ -269,7 +317,8 @@ const guests = [
     showCheckinButton(matches[0]);
   } else if (matches.length > 1) {
     let selectHTML = '<label>請選擇您的全名：</label><br/><select onchange="selectGuest(this.value)"><option value="">-- 請選擇 --</option>';
-    matches.forEach(g => {
+    
+	matches.forEach(g => {
       selectHTML += `<option value="${g.name}">${g.name}</option>`;
     });
     selectHTML += '</select>';
@@ -279,26 +328,6 @@ const guests = [
   }
 }
 
-function selectGuest(name) {
-  const guest = guests.find(g => g.name === name);
-  if (guest) showCheckinButton(guest);
-}
-
-// 顯示桌號與報到按鈕
-function showCheckinButton(guest) {
-  const resultEl = document.getElementById('result');
-  resultEl.innerHTML = `${guest.name} 您的桌號是：${guest.table}<br/><br/>`;
-
-  // form 送出到 Apps Script
-  const formHTML = `
-    <form action="https://script.google.com/macros/s/AKfycbzUJI1bqGnUiciy8H6VYo1lDcw1QQRoHH4fSSGb68S_-_Nc8S6tzn9ywn87qk2DuAir/exec" method="POST" target="checkinFrame">
-      <input type="hidden" name="name" value="${guest.name}" />
-      <input type="hidden" name="table" value="${guest.table}" />
-      <button type="submit">✅ 報到</button>
-    </form>
-  `;
-  resultEl.innerHTML += formHTML;
-}
 </script>
 
 </body>
